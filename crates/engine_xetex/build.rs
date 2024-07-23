@@ -137,6 +137,7 @@ fn main() {
 
 const OBJC_FLAGS: &[&str] = &[
     "-fobjc-arc",
+    "-fsanitize=address",
 ];
 
 const OBJC_FILES: &[&str] = &[
@@ -180,6 +181,7 @@ const C_FLAGS: &[&str] = &[
     "-Wno-implicit-fallthrough",
     "-Wno-sign-compare",
     "-std=gnu11",
+    "-fsanitize=address",
 ];
 
 const C_FILES: &[&str] = &[
@@ -231,6 +233,7 @@ const CXX_FLAGS: &[&str] = &[
     "-Wno-implicit-fallthrough",
     "-fno-exceptions",
     "-fno-rtti",
+    "-fsanitize=address",
 ];
 
 const CXX_FILES: &[&str] = &["xetex/teckit-Engine.cpp", "xetex/xetex-XeTeXOTMath.cpp"];

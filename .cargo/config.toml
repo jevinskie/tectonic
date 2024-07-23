@@ -1,0 +1,2 @@
+[target.debug]
+rustflags = ["-Z", "sanitizer=address"]
