@@ -114,6 +114,16 @@ pub trait DriverHooks {
     ) {
     }
 
+    /// immediate flush
+    fn event_output_flushed_imm(
+        &mut self,
+        name: String,
+        _digest: DigestData,
+        status: &mut dyn StatusBackend,
+    ) {
+        tt_warning!(status, "DriverHooks event_output_flushed_imm of {} called", name; Error::msg("noerror"));
+    }
+
     /// This function is called when an input file is closed. The "digest"
     /// argument specifies the cryptographic digest of the data that were
     /// read, if available. This digest is not always available, if the engine
@@ -536,11 +546,14 @@ impl<'a> CoreBridgeState<'a> {
     fn output_flush(&mut self, handle: *mut OutputHandle) -> bool {
         let rhandle: &mut OutputHandle = unsafe { &mut *handle };
         let result = rhandle.flush();
+        let name = rhandle.name().to_string();
+        tt_warning!(self.status, "flush of {} begins", name; Error::msg("noerror"));
+        self.hooks.event_output_flushed_imm(name.clone(), rhandle.digest(), self.status);
 
         match result {
             Ok(_) => false,
             Err(e) => {
-                tt_warning!(self.status, "flush failed"; e.into());
+                tt_warning!(self.status, "flush of {} failed", name.clone(); e.into());
                 true
             }
         }

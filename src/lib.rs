@@ -170,7 +170,7 @@ pub fn latex_to_pdf<T: AsRef<str>>(latex: T) -> Result<Vec<u8>> {
             .do_not_write_output_files();
 
         let mut sess =
-            ctry!(sb.create(&mut status); "failed to initialize the LaTeX processing session");
+            ctry!(sb.create(&mut *status); "failed to initialize the LaTeX processing session");
         ctry!(sess.run(&mut status); "the LaTeX engine failed");
         sess.into_file_data()
     };

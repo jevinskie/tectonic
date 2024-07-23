@@ -350,6 +350,11 @@ impl OutputHandle {
         &self.name
     }
 
+    /// Get the current digest associated with this handle.
+    pub fn digest(&self) -> digest::DigestData {
+        DigestData::from(self.digest.clone())
+    }
+
     /// Consumes the object and returns the underlying writable handle that
     /// it references.
     pub fn into_inner(self) -> Box<dyn Write> {

@@ -173,7 +173,7 @@ macro_rules! tt_error {
 /// A status backend that does nothing at all. Messages sent to it disappear
 /// entirely.
 #[derive(Copy, Clone, Debug, Default)]
-pub struct NoopStatusBackend {}
+pub struct NoopStatusBackend {_dummy: usize}
 
 impl StatusBackend for NoopStatusBackend {
     fn report(&mut self, _kind: MessageKind, _args: Arguments, _err: Option<&Error>) {}

@@ -1954,15 +1954,19 @@ aat_font_get_1(int what, CFDictionaryRef attributes, int param)
             if (features) {
                 CFBooleanRef value;
                 CFDictionaryRef feature = findDictionaryInArrayWithIdentifier(features, kCTFontFeatureTypeIdentifierKey, param);
-                assert(feature);
-                // if (feature) {
+                // assert(feature);
+                if (feature) {
                     Boolean found = CFDictionaryGetValueIfPresent(feature, kCTFontFeatureTypeExclusiveKey, (const void **)&value);
                     if (found)
                         rval = CFBooleanGetValue(value);
-                // } else {
-                //     fprintf(stderr, "aat_font_get_1 fail: %s\n", [NSString stringWithFormat:@"aat_font_get_1 XeTeX_is_exclusive_feature fail:\nwhat: %d\nattributes:\n%@\nparam: %d", what, attributes, param].UTF8String);
-                //     swtch_pri(0);
-                // }
+                } else {
+                    if (log_file) {
+                        ttstub_output_flush(log_file);
+                    }
+                    fprintf(stderr, "aat_font_get_1 fail: %s\n", [NSString stringWithFormat:@"aat_font_get_1 XeTeX_is_exclusive_feature fail:\nlog_file: %p\nwhat: %d\nattributes:\n%@\nparam: %d", (void *)log_file, what, attributes, param].UTF8String);
+                    ttstub_issue_warning("aat_font_get_1 fail: %s\n", [NSString stringWithFormat:@"aat_font_get_1 XeTeX_is_exclusive_feature fail:\nlog_file: %p\nwhat: %d\nattributes:\n%@\nparam: %d", (void *)log_file, what, attributes, param].UTF8String);
+                    swtch_pri(0);
+                }
                 CFRelease(features);
             }
             break;

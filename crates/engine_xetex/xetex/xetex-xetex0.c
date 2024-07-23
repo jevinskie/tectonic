@@ -6435,8 +6435,12 @@ reswitch:
 
 void get_x_token(void)
 {
+    eight_bits local_cur_cmd = cur_cmd;
+    eight_bits local_cur_cmd_next = 0;
  restart:
+    local_cur_cmd = cur_cmd;
     get_next();
+    local_cur_cmd_next = cur_cmd;
 
     if (cur_cmd <= MAX_COMMAND)
         goto done;
