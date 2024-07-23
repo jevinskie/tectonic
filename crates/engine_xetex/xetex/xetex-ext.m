@@ -36,6 +36,9 @@ authorization from the copyright holders.
  * additional plain C extensions for XeTeX - mostly platform-neutral
  */
 
+#undef NDEBUG
+#include <assert.h>
+
 #include "xetex-core.h"
 #include "xetex-ext.h"
 #include "teckit-c-Engine.h"
@@ -58,6 +61,8 @@ authorization from the copyright holders.
 #include <graphite2/Font.h>
 
 #include "xetex-xetexd.h"
+
+#import <Foundation/Foundation.h>
 
 
 /* OT-related constants we need */
@@ -1949,9 +1954,15 @@ aat_font_get_1(int what, CFDictionaryRef attributes, int param)
             if (features) {
                 CFBooleanRef value;
                 CFDictionaryRef feature = findDictionaryInArrayWithIdentifier(features, kCTFontFeatureTypeIdentifierKey, param);
-                Boolean found = CFDictionaryGetValueIfPresent(feature, kCTFontFeatureTypeExclusiveKey, (const void **)&value);
-                if (found)
-                    rval = CFBooleanGetValue(value);
+                assert(feature);
+                // if (feature) {
+                    Boolean found = CFDictionaryGetValueIfPresent(feature, kCTFontFeatureTypeExclusiveKey, (const void **)&value);
+                    if (found)
+                        rval = CFBooleanGetValue(value);
+                // } else {
+                //     fprintf(stderr, "aat_font_get_1 fail: %s\n", [NSString stringWithFormat:@"aat_font_get_1 XeTeX_is_exclusive_feature fail:\nwhat: %d\nattributes:\n%@\nparam: %d", what, attributes, param].UTF8String);
+                //     swtch_pri(0);
+                // }
                 CFRelease(features);
             }
             break;

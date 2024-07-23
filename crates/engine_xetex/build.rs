@@ -103,6 +103,11 @@ fn main() {
         cxx_cfg.flag("/EHsc");
     }
 
+    let mut objc_cfg = c_cfg.clone();
+    for flag in OBJC_FLAGS {
+        objc_cfg.flag_if_supported(flag);
+    }
+
     // OK, back to generic build rules.
 
     for file in C_FILES {
@@ -113,8 +118,13 @@ fn main() {
         cxx_cfg.file(file);
     }
 
+    for file in OBJC_FILES {
+        objc_cfg.file(file);
+    }
+
     c_cfg.compile("libtectonic_engine_xetex_c.a");
     cxx_cfg.compile("libtectonic_engine_xetex_cxx.a");
+    objc_cfg.compile("libtectonic_engine_xetex_objc.a");
 
     // Rebuild if C/C++ files have changed. We scan the whole directory to get
     // the headers too.
@@ -124,6 +134,14 @@ fn main() {
         println!("cargo:rerun-if-changed={}", file.path().display());
     }
 }
+
+const OBJC_FLAGS: &[&str] = &[
+    "-fobjc-arc",
+];
+
+const OBJC_FILES: &[&str] = &[
+    "xetex/xetex-ext.m",
+];
 
 const C_FLAGS: &[&str] = &[
     "-Wall",
@@ -167,7 +185,7 @@ const C_FLAGS: &[&str] = &[
 const C_FILES: &[&str] = &[
     "xetex/xetex-engine-interface.c",
     "xetex/xetex-errors.c",
-    "xetex/xetex-ext.c",
+    // "xetex/xetex-ext.c",
     "xetex/xetex-ini.c",
     "xetex/xetex-io.c",
     "xetex/xetex-linebreak.c",
