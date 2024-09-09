@@ -1,2 +1,2 @@
 [target.debug]
-rustflags = ["-Z", "sanitizer=address"]
+rustflags = ["-Z", "sanitizer=address", "-Z", "build-std"]

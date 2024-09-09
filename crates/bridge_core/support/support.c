@@ -180,9 +180,16 @@ ttstub_output_putc(rust_output_handle_t handle, int c)
 }
 
 
+extern FILE *myerr;
+extern rust_output_handle_t rust_stdout;
+extern rust_output_handle_t log_file;
+
 size_t
 ttstub_output_write(rust_output_handle_t handle, const char *data, size_t len)
 {
+    if (handle == rust_stdout || handle == log_file) {
+        fprintf(myerr, "%.*s", (int)len, data);
+    }
     return ttbc_output_write(tectonic_global_bridge_core, handle, (const uint8_t*) data, len);
 }
 

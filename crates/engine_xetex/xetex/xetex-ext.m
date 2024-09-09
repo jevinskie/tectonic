@@ -49,6 +49,7 @@ authorization from the copyright holders.
 #include <math.h> /* for fabs() */
 #include <signal.h>
 #include <time.h>
+#include <unistd.h>
 
 #ifndef _MSC_VER
 #include <sys/time.h>
@@ -72,6 +73,17 @@ authorization from the copyright holders.
 
 static UBreakIterator* brkIter = NULL;
 static int brkLocaleStrNum = 0;
+
+FILE *myerr = NULL;
+
+__attribute__((constructor))
+static void init_mystderr(void) {
+    int new_stderr_fd = dup(STDERR_FILENO);
+    assert(new_stderr_fd >= 0);
+    myerr = fdopen(new_stderr_fd, "w");
+    assert(myerr);
+    assert(!setvbuf(myerr, NULL, _IONBF, 0));
+}
 
 void
 linebreak_start(int f, int32_t localeStrNum, uint16_t* text, int32_t textLength)
@@ -1955,12 +1967,18 @@ aat_font_get_1(int what, CFDictionaryRef attributes, int param)
                 CFBooleanRef value;
                 CFDictionaryRef feature = findDictionaryInArrayWithIdentifier(features, kCTFontFeatureTypeIdentifierKey, param);
                 // assert(feature);
+                // if (!feature) {
+                //     fprintf(myerr, "aat_font_get_1 fail: %s\n", [NSString stringWithFormat:@"aat_font_get_1 XeTeX_is_exclusive_feature fail:\nwhat: %d\nattributes:\n%@\nparam: %d", what, attributes, param].UTF8String);
+                //     swtch_pri(0);
+                // }
                 if (feature) {
                     Boolean found = CFDictionaryGetValueIfPresent(feature, kCTFontFeatureTypeExclusiveKey, (const void **)&value);
+                    fprintf(myerr, "aat_font_get_1 pass: %s\n", [NSString stringWithFormat:@"aat_font_get_1 XeTeX_is_exclusive_feature pass:\nwhat: %d\nattributes:%@\nfeatures:\n%@\nfeature:\n%@\nparam: %d\nfound: %d\nfound_value: %s", what, attributes, features, feature, param, found, found ? (CFBooleanGetValue(value) ? "T" : "F") : "n/a"].UTF8String);
+                    swtch_pri(0);
                     if (found)
                         rval = CFBooleanGetValue(value);
                 } else {
-                    fprintf(stderr, "aat_font_get_1 fail: %s\n", [NSString stringWithFormat:@"aat_font_get_1 XeTeX_is_exclusive_feature fail:\nwhat: %d\nattributes:\n%@\nparam: %d", what, attributes, param].UTF8String);
+                    fprintf(myerr, "aat_font_get_1 fail: %s\n", [NSString stringWithFormat:@"aat_font_get_1 XeTeX_is_exclusive_feature fail:\nwhat: %d\nattributes:\n%@features:\n%@\nparam: %d", what, attributes, features, param].UTF8String);
                     swtch_pri(0);
                 }
                 CFRelease(features);

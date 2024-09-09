@@ -12,4 +12,9 @@ fn main() {
     // they want to spawn off executables.
     let target = env::var("TARGET").unwrap();
     println!("cargo:rustc-env=TARGET={target}");
+    println!("cargo::rustc-link-arg=-fsanitize=address");
+    // println!("cargo::rustc-link-arg=/Users/jevin/.rustup/toolchains/stable-aarch64-apple-darwin/lib/rustlib/aarch64-apple-darwin/lib/librustc-stable_rt.asan.dylib")
+    println!("cargo::rustc-link-arg=/Applications/Xcode-15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib");
+    println!("cargo::rustc-link-arg=-Wl,-rpath,/Applications/Xcode-15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/lib/darwin");
+
 }
